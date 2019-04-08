@@ -37,6 +37,9 @@ else version (TVOS)
 else version (WatchOS)
     version = Darwin;
 
+version (WebAssembly) {
+  import core.sys.wasi.sys.types;
+}
 private
 {
     // interface to rt.tlsgc
@@ -2630,6 +2633,10 @@ else
                        .set  at`, "r", regs.ptr);
                 __asm(".set  noat; sw $$29, 0($0); .set  at;", "r", &sp);
             }
+	    else version (WebAssembly) //TODO: needs to be WASI
+	    {
+		    // TODO: noop
+	    }
             else
             {
                 static assert(false, "Architecture not supported.");
@@ -6386,3 +6393,6 @@ version (Windows)
 else
 version (Posix)
     alias ThreadID = pthread_t;
+ else
+   version (WebAssembly)
+     alias ThreadID = pthread_t;

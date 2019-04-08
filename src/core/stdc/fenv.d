@@ -395,7 +395,14 @@ else version (CRuntime_Musl)
         }
         alias ushort fexcept_t;
     }
-    else
+    else version(WebAssembly)
+    {
+	    struct fenv_t
+	    {
+		    ulong __cw;
+	    }
+	    alias ulong fexcept_t;
+    } else
     {
         static assert(false, "Architecture not supported.");
     }
@@ -747,11 +754,20 @@ else
             FE_TOWARDZERO   = 0x1, ///
         }
     }
+    else version (WebAssembly) // TODO: needs to be WASI
+    {
+	    enum
+	    {
+		    FE_TONEAREST    = 0x0, ///
+		    FE_DOWNWARD     = 0x3, /// don't known about these...
+		    FE_UPWARD       = 0x2, /// ...
+		    FE_TOWARDZERO   = 0x1, /// ...
+	    }
+    }
     else
     {
         static assert(0, "Unimplemented architecture");
     }
-
 }
 
 version (GNUFP)
